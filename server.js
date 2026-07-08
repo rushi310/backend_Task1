@@ -41,7 +41,7 @@ const blogs = [
     },
     {
         id: 4,
-        title: "Angular",
+        title: "React",
         author: "Michael Brown",
         content: "ullam et saepe reiciendis voluptatem adipisci\nsit amet autem assumenda provident rerum culpa\nquis hic commodi nesciunt rem tenetur doloremque ipsam iure\nquis sunt voluptatem rerum illo velit",
         category: "Frontend",
@@ -51,7 +51,7 @@ const blogs = [
     },
     {
         id: 5,
-        title: "JavaScript",
+        title: "Next.js",
         author: "David Wilson",
         content: "ut aspernatur corporis harum nihil quis provident sequi\nmollitia nobis aliquid molestiae\nperspiciatis et ea nemo ab reprehenderit accusantium quas\nvoluptate dolores velit et doloremque molestiae",
         category: "Programming",
@@ -61,7 +61,7 @@ const blogs = [
     },
     {
         id: 6,
-        title: "CSS",
+        title: "Docker",
         author: "Sarah Lee",
         content: "ut aspernatur corporis harum nihil quis provident sequi\nmollitia nobis aliquid molestiae\nperspiciatis et ea nemo ab reprehenderit accusantium quas\nvoluptate dolores velit et doloremque molestiae",
         category: "Frontend",
