@@ -1,10 +1,7 @@
 {
   "name": "backend_task1",
   "version": "1.0.0",
-<<<<<<< HEAD
   "main": "server.js",
-=======
->>>>>>> dbb4845a8acffaaf653c4be9b1a71515be527d8e
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
