@@ -1,11 +1,13 @@
+const cors = require('cors');
+const express = require('express');
 
+const app = express();
 
-const port = 4000;
-const cors = require('cors')
-const express = require('express')
+const port = process.env.PORT || 4000;
 
-const app = express()
 app.use(cors());
+app.use(express.json());
+
 const blogs = [
     {
         id: 1,
@@ -66,162 +68,175 @@ const blogs = [
         tags: ["Animations", "Responsive Design"],
         isPublished: false,
         createdAt: Date.now()
-    },
+    }
 ];
 
-app.use(express.json())
 app.get('/blogs', (req, res) => {
     try {
         res.status(200).json({
             success: true,
             data: blogs
-        })
-    }
-    catch (error) {
+        });
+    } catch (error) {
         res.status(500).json({
             success: false,
-            message: `Error in fetching blogs`
-        })
+            message: "Error in fetching blogs"
+        });
     }
-})
+});
 
-app.get("/blogs/:id", (req, res) => {
+app.get('/blogs/:id', (req, res) => {
     try {
-        let id = Number(req.params.id);
-        let blog = blogs.find(p => p.id === id)
+        const id = Number(req.params.id);
+
+        const blog = blogs.find(blog => blog.id === id);
 
         if (!blog) {
             return res.status(404).json({
                 success: false,
-                message: `The blog with id ${id}is Not Found`
-            })
+                message: `The blog with ID ${id} was not found`
+            });
         }
+
         res.status(200).json({
             success: true,
             data: blog
-        })
-    }
-    catch (error) {
+        });
+
+    } catch (error) {
         res.status(500).json({
             success: false,
-            message: `error fetch blog.`
-        })
+            message: "Error while fetching blog"
+        });
     }
-})
+});
 
 app.post('/blogs', (req, res) => {
     try {
-        let { title, content, author } = req.body;
+        const {
+            title,
+            content,
+            author,
+            category,
+            tags,
+            isPublished
+        } = req.body;
+
         if (!title || !content) {
             return res.status(400).json({
                 success: false,
-                message: 'Title & content are required'
-            })
+                message: "Title and content are required"
+            });
         }
-        let newBlog = {
-            title: title,
-            content: content,
-            author: author,
+
+        const newBlog = {
             id: Date.now(),
+            title,
+            content,
+            author,
+            category,
+            tags,
+            isPublished,
             createdAt: Date.now(),
             updatedAt: null
-        }
-        blogs.unshift(newBlog)
+        };
+
+        blogs.unshift(newBlog);
+
         res.status(201).json({
             success: true,
             data: newBlog,
-            message: `The blog with id ${newBlog.id} created successfully`
-        })
-    }
-    catch (error) {
+            message: `The blog with ID ${newBlog.id} was created successfully`
+        });
+
+    } catch (error) {
         res.status(500).json({
             success: false,
-            message: `error while creating blog.`
-        })
+            message: "Error while creating blog"
+        });
     }
-})
+});
 
 app.patch('/blogs/:id', (req, res) => {
     try {
-        // Get blog ID from URL
         const blogId = Number(req.params.id);
 
-        // Find blog index
         const blogIndex = blogs.findIndex(blog => blog.id === blogId);
 
-        // Check if blog exists
         if (blogIndex === -1) {
             return res.status(404).json({
                 success: false,
-                message: `The blog with ID ${blogId} not found.`
+                message: `The blog with ID ${blogId} was not found`
             });
         }
 
-        // Get updated data
-        const { title, content, author } = req.body;
-
-        // Validate (optional - see note below)
-        if (!title && !content && !author) {
+        if (Object.keys(req.body).length === 0) {
             return res.status(400).json({
                 success: false,
-                message: "Please provide at least one field to update."
+                message: "Please provide at least one field to update"
             });
         }
 
-        // Create updated object
         const updatedBlog = {
             ...blogs[blogIndex],
             ...req.body,
+            id: blogs[blogIndex].id,
+            createdAt: blogs[blogIndex].createdAt,
             updatedAt: Date.now()
         };
 
-        // Replace old blog
         blogs[blogIndex] = updatedBlog;
 
-        // Send response
         res.status(200).json({
             success: true,
-            message: "Blog updated successfully.",
+            message: "Blog updated successfully",
             data: updatedBlog
         });
 
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: "Error while updating blog.",
-            error: error.message
+            message: "Error while updating blog"
         });
     }
 });
 
 app.delete('/blogs/:id', (req, res) => {
     try {
-        let id = req.params.id;
-        let getIndex = blogs.findIndex(b => b.id == id)
+        const id = Number(req.params.id);
 
-        if (getIndex === -1) {
+        const blogIndex = blogs.findIndex(blog => blog.id === id);
+
+        if (blogIndex === -1) {
             return res.status(404).json({
                 success: false,
-                message: `blog with id ${id} not Found.`
-            })
+                message: `The blog with ID ${id} was not found`
+            });
         }
 
-        blogs.splice(getIndex, 1);
+        const deletedBlog = blogs.splice(blogIndex, 1)[0];
 
         res.status(200).json({
             success: true,
-            data: blogs,
-            message: `blog with id ${id} deleted successfully`
-        })
-    }
-    catch (error) {
+            data: deletedBlog,
+            message: `The blog with ID ${id} was deleted successfully`
+        });
+
+    } catch (error) {
         res.status(500).json({
             success: false,
-            message: `error while deleting message..`
-        })
+            message: "Error while deleting blog"
+        });
     }
-})
+});
+
+app.get('/', (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "Blog API is running"
+    });
+});
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:4000`);
-})
+    console.log(`Server is running on port ${port}`);
+});
